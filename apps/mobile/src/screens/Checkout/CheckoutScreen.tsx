@@ -160,10 +160,6 @@ export default function CheckoutScreen({
             <ScrollView
                 contentContainerStyle={styles.content}
             >
-                <Text style={styles.title}>
-                    Checkout
-                </Text>
-
                 <Text style={styles.sectionTitle}>
                     Delivery Address
                 </Text>

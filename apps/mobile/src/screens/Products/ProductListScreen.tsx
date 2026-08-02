@@ -97,7 +97,9 @@ export default function ProductListScreen({
         refreshing={isRefetching}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
-            No products available.
+            {search || selectedCategory !== "All"
+              ? "No products match your search/filter."
+              : "No products available."}
           </Text>
         }
       />
