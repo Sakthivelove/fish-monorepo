@@ -7,6 +7,7 @@ import {
     useDeleteProduct,
     useUpdateProduct,
 } from "@/lib/products";
+import { Plus, Pencil, Trash2, Power } from "lucide-react";
 
 export default function ProductsPage() {
     const queryClient = useQueryClient();
@@ -99,14 +100,16 @@ export default function ProductsPage() {
 
     if (isLoading) {
         return (
-            <div>Loading products...</div>
+            <div className="flex h-64 items-center justify-center text-gray-400">
+                Loading products...
+            </div>
         );
     }
 
     if (error) {
         return (
-            <div>
-                Failed to load products
+            <div className="rounded-xl border border-red-100 bg-red-50 p-6 text-red-600">
+                Failed to load products.
             </div>
         );
     }
@@ -114,45 +117,30 @@ export default function ProductsPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                     Products
                 </h1>
 
                 <Link
                     href="/admin/products/create"
-                    className="border px-4 py-2 rounded"
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700"
                 >
+                    <Plus size={16} />
                     Add Product
                 </Link>
             </div>
+
             {/* Desktop */}
-            <div className="hidden md:block border rounded">
-                <table className="w-full">
+            <div className="hidden overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm md:block">
+                <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b">
-                            <th className="p-3 text-left">
-                                Tamil Name
-                            </th>
-
-                            <th className="p-3 text-left">
-                                Category
-                            </th>
-
-                            <th className="p-3 text-left">
-                                Price/Kg
-                            </th>
-
-                            <th className="p-3 text-left">
-                                Stock
-                            </th>
-
-                            <th className="p-3 text-left">
-                                Status
-                            </th>
-
-                            <th className="p-3 text-left">
-                                Actions
-                            </th>
+                        <tr className="border-b border-gray-100 bg-gray-50 text-left text-gray-500">
+                            <th className="p-3 font-medium">Tamil Name</th>
+                            <th className="p-3 font-medium">Category</th>
+                            <th className="p-3 font-medium">Price/Kg</th>
+                            <th className="p-3 font-medium">Stock</th>
+                            <th className="p-3 font-medium">Status</th>
+                            <th className="p-3 font-medium">Actions</th>
                         </tr>
                     </thead>
 
@@ -161,56 +149,45 @@ export default function ProductsPage() {
                             (product) => (
                                 <tr
                                     key={product.id}
-                                    className="border-b"
+                                    className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60"
                                 >
-                                    <td className="p-3">
-                                        {
-                                            product.tamilName
-                                        }
+                                    <td className="p-3 font-medium text-gray-900">
+                                        {product.tamilName}
+                                    </td>
+
+                                    <td className="p-3 text-gray-600">
+                                        {product.category}
+                                    </td>
+
+                                    <td className="p-3 text-gray-900">
+                                        ₹{product.pricePerKg}
+                                    </td>
+
+                                    <td className="p-3 text-gray-600">
+                                        {product.stockQuantityGrams}g
                                     </td>
 
                                     <td className="p-3">
-                                        {
-                                            product.category
-                                        }
-                                    </td>
-
-                                    <td className="p-3">
-                                        ₹
-                                        {
-                                            product.pricePerKg
-                                        }
-                                    </td>
-
-                                    <td className="p-3">
-                                        {
-                                            product.stockQuantityGrams
-                                        }
-                                        g
-                                    </td>
-
-                                    <td className="p-3">
-                                        {product.isActive
-                                            ? "Active"
-                                            : "Inactive"}
+                                        <span
+                                            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                                                product.isActive
+                                                    ? "bg-green-100 text-green-700"
+                                                    : "bg-gray-100 text-gray-500"
+                                            }`}
+                                        >
+                                            {product.isActive ? "Active" : "Inactive"}
+                                        </span>
                                     </td>
 
                                     <td className="p-3">
                                         <div className="flex flex-wrap gap-2">
                                             <Link
                                                 href={`/admin/products/${product.id}`}
-                                                className="px-3 py-1 border rounded text-blue-600"
+                                                className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
                                             >
+                                                <Pencil size={13} />
                                                 Edit
                                             </Link>
-
-                                            <button
-                                                onClick={() => handleDelete(product.id)}
-                                                disabled={deleteProduct.isPending}
-                                                className="px-3 py-1 border rounded text-red-600"
-                                            >
-                                                Delete
-                                            </button>
 
                                             <button
                                                 onClick={() =>
@@ -220,11 +197,19 @@ export default function ProductsPage() {
                                                     )
                                                 }
                                                 disabled={updateProduct.isPending}
-                                                className="px-3 py-1 border rounded"
+                                                className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
                                             >
-                                                {product.isActive
-                                                    ? "Disable"
-                                                    : "Enable"}
+                                                <Power size={13} />
+                                                {product.isActive ? "Disable" : "Enable"}
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleDelete(product.id)}
+                                                disabled={deleteProduct.isPending}
+                                                className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
+                                            >
+                                                <Trash2 size={13} />
+                                                Delete
                                             </button>
                                         </div>
                                     </td>
@@ -236,7 +221,7 @@ export default function ProductsPage() {
                             <tr>
                                 <td
                                     colSpan={6}
-                                    className="p-6 text-center"
+                                    className="p-8 text-center text-gray-400"
                                 >
                                     No products found
                                 </td>
@@ -244,56 +229,53 @@ export default function ProductsPage() {
                         )}
                     </tbody>
                 </table>
-
             </div>
+
             {/* Mobile */}
-            <div className="md:hidden space-y-4">
+            <div className="space-y-4 md:hidden">
                 {products.map((product) => (
                     <div
                         key={product.id}
-                        className="border rounded-lg p-4"
+                        className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
                     >
-                        <h3 className="font-bold text-lg">
-                            {product.tamilName}
-                        </h3>
+                        <div className="flex items-start justify-between">
+                            <h3 className="text-lg font-bold text-gray-900">
+                                {product.tamilName}
+                            </h3>
+                            <span
+                                className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                                    product.isActive
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-gray-100 text-gray-500"
+                                }`}
+                            >
+                                {product.isActive ? "Active" : "Inactive"}
+                            </span>
+                        </div>
 
-                        <div className="mt-2 space-y-1 text-sm">
+                        <div className="mt-2 space-y-1 text-sm text-gray-600">
                             <p>
-                                <span className="font-medium">
-                                    Category:
-                                </span>{" "}
+                                <span className="font-medium text-gray-700">Category:</span>{" "}
                                 {product.category}
                             </p>
 
                             <p>
-                                <span className="font-medium">
-                                    Price:
-                                </span>{" "}
+                                <span className="font-medium text-gray-700">Price:</span>{" "}
                                 ₹{product.pricePerKg}/kg
                             </p>
 
                             <p>
-                                <span className="font-medium">
-                                    Stock:
-                                </span>{" "}
+                                <span className="font-medium text-gray-700">Stock:</span>{" "}
                                 {product.stockQuantityGrams}g
-                            </p>
-
-                            <p>
-                                <span className="font-medium">
-                                    Status:
-                                </span>{" "}
-                                {product.isActive
-                                    ? "Active"
-                                    : "Inactive"}
                             </p>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mt-4">
+                        <div className="mt-4 flex flex-wrap gap-2">
                             <Link
                                 href={`/admin/products/${product.id}`}
-                                className="border px-3 py-2 rounded text-blue-600"
+                                className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-blue-600"
                             >
+                                <Pencil size={13} />
                                 Edit
                             </Link>
 
@@ -304,24 +286,30 @@ export default function ProductsPage() {
                                         !product.isActive
                                     )
                                 }
-                                className="border px-3 py-2 rounded"
+                                className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600"
                             >
-                                {product.isActive
-                                    ? "Disable"
-                                    : "Enable"}
+                                <Power size={13} />
+                                {product.isActive ? "Disable" : "Enable"}
                             </button>
 
                             <button
                                 onClick={() =>
                                     handleDelete(product.id)
                                 }
-                                className="border px-3 py-2 rounded text-red-600"
+                                className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-red-600"
                             >
+                                <Trash2 size={13} />
                                 Delete
                             </button>
                         </div>
                     </div>
                 ))}
+
+                {products.length === 0 && (
+                    <p className="p-6 text-center text-gray-400">
+                        No products found
+                    </p>
+                )}
             </div>
         </div>
     );

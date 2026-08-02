@@ -12,6 +12,7 @@ import { AddressForm, AddressFormValues } from "../../components/Checkout";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useProfile } from "../../hooks/useProfile";
 import Colors from "../../theme/colors";
+import { registerForPushNotifications } from "../../utils/registerForPushNotifications";
 
 export default function ProfileScreen() {
     const { profile, updateProfile, loading } = useProfile();
@@ -38,6 +39,11 @@ export default function ProfileScreen() {
 
     async function handleSave() {
         await updateProfile(form);
+
+        if (form.phoneNumber.trim().length >= 10) {
+            registerForPushNotifications(form.phoneNumber);
+        }
+
         Alert.alert("Saved", "Your details have been saved.");
     }
 

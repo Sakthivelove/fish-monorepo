@@ -6,6 +6,7 @@ import { inventoryRouter } from "./inventory.routes";
 import { customersRouter } from "./customers.routes";
 import { reportsRouter } from "./reports.routes";
 import {uploadRouter} from "./upload.routes"
+import { pushRouter } from "./push.routes";
 
 export const appRouter = {
   ...productsRouter,
@@ -14,5 +15,6 @@ export const appRouter = {
   ...dashboardRouter,
   ...inventoryRouter,
   ...customersRouter,
-  ...reportsRouter
+  ...reportsRouter,
+  ...pushRouter,
 };

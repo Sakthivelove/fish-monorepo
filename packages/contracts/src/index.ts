@@ -8,6 +8,7 @@ import { inventoryContract } from "./inventory.contract";
 import { customersContract } from "./customers.contract";
 import { reportsContract } from "./reports.contract";
 import { uploadContract } from "./upload.contract";
+import { pushContract } from "./push.contract";
 
 const c = initContract();
 
@@ -26,6 +27,7 @@ export const contract = c.router({
   ...customersContract,
   ...reportsContract,
   ...uploadContract,
+  ...pushContract,
 });
 
 // Backend-only: the /upload route is implemented as a plain
@@ -41,6 +43,7 @@ export const expressRouterContract = c.router({
   ...inventoryContract,
   ...customersContract,
   ...reportsContract,
+  ...pushContract,
 });
 
 export * from "./auth.contract";
@@ -51,3 +54,4 @@ export * from "./inventory.contract";
 export * from "./customers.contract";
 export * from "./reports.contract";
 export * from "./upload.contract";
+export * from "./push.contract";

@@ -24,6 +24,7 @@ import { useCreateOrder } from "../../hooks/useOrders";
 import { CheckoutScreenProps } from "../../navigation/types";
 import Colors from "../../theme/colors";
 import { getErrorMessage } from "../../utils/getErrorMessage";
+import { registerForPushNotifications } from "../../utils/registerForPushNotifications";
 
 export default function CheckoutScreen({
     navigation,
@@ -132,6 +133,9 @@ export default function CheckoutScreen({
             await updateProfile(form);
 
             clearCart();
+
+            // Fire-and-forget: never block the success flow on this.
+            registerForPushNotifications(form.phoneNumber);
 
             Alert.alert(
                 "Order Placed!",

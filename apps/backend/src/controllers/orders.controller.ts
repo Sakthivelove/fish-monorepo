@@ -8,6 +8,7 @@ import { sendOrderCancelledWhatsApp, sendOrderConfirmation, sendOrderStatusUpdat
 import { LOW_STOCK_THRESHOLD } from "../constants/inventory";
 import { sendOrderCancelledEmail, sendOrderConfirmationEmail } from "../lib/email";
 import { notifyLowStock, notifyOrderCreated } from "../notifications/notification-center";
+import { notifyOrderStatusChange } from "../notifications/push-notify";
 
 export const getOrders = async ({
   query,
@@ -617,12 +618,25 @@ export const updateOrderStatus = async ({ params, body }: { params: { id: string
 
   const updated = await prisma.order.update({ where: { id: params.id }, data: { status: body.status as OrderStatus }, include: { customer: true } });
 
-  await sendOrderStatusUpdate({
-    customerPhone: updated.customer.phoneNumber,
-    customerName: updated.customer.name,
-    orderId: updated.id,
-    status: updated.status,
-  });
+  try {
+    await sendOrderStatusUpdate({
+      customerPhone: updated.customer.phoneNumber,
+      customerName: updated.customer.name,
+      orderId: updated.id,
+      status: updated.status,
+    });
+  } catch (error) {
+    console.error(
+      "[updateOrderStatus] WhatsApp notification failed (status update still succeeded):",
+      error
+    );
+  }
+
+  await notifyOrderStatusChange(
+    updated.customer.phoneNumber,
+    updated.id,
+    updated.status
+  );
 
   return {
     status: 200,
@@ -792,11 +806,12 @@ export const cancelOrder = async ({
     },
   });
 
-  // -------------------------
-  // Telegram
-  // -------------------------
+  try {
+    // -------------------------
+    // Telegram
+    // -------------------------
 
-  await sendTelegramMessage(`
+    await sendTelegramMessage(`
 ❌ <b>ORDER CANCELLED</b>
 
 ━━━━━━━━━━━━━━━━━━━━
@@ -822,31 +837,13 @@ ${body.cancelledBy}
 ${body.reason ?? "No reason provided"}
 `);
 
-  // -------------------------
-  // WhatsApp
-  // -------------------------
+    // -------------------------
+    // WhatsApp
+    // -------------------------
 
-  await sendOrderCancelledWhatsApp({
-    customerPhone:
-      order.customer.phoneNumber,
-
-    customerName:
-      order.customer.name,
-
-    orderId: order.id,
-
-    reason: body.reason,
-
-    cancelledBy: body.cancelledBy,
-  });
-
-  // -------------------------
-  // Email
-  // -------------------------
-
-  if (order.customer.email) {
-    await sendOrderCancelledEmail({
-      email: order.customer.email,
+    await sendOrderCancelledWhatsApp({
+      customerPhone:
+        order.customer.phoneNumber,
 
       customerName:
         order.customer.name,
@@ -857,7 +854,37 @@ ${body.reason ?? "No reason provided"}
 
       cancelledBy: body.cancelledBy,
     });
+
+    // -------------------------
+    // Email
+    // -------------------------
+
+    if (order.customer.email) {
+      await sendOrderCancelledEmail({
+        email: order.customer.email,
+
+        customerName:
+          order.customer.name,
+
+        orderId: order.id,
+
+        reason: body.reason,
+
+        cancelledBy: body.cancelledBy,
+      });
+    }
+  } catch (error) {
+    console.error(
+      "[cancelOrder] Notification failed (cancellation still succeeded):",
+      error
+    );
   }
+
+  await notifyOrderStatusChange(
+    order.customer.phoneNumber,
+    order.id,
+    "CANCELLED"
+  );
 
   return {
     status: 200 as const,
