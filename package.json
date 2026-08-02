@@ -1,0 +1,14 @@
+{
+  "name": "fish-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:contracts": "npm run build --workspace=packages/contracts",
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:mobile": "npm run start --workspace=apps/mobile"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@fish/contracts",
+  "version": "1.0.0",
+  "description": "Single source of truth ts-rest contracts shared by fish-backend, fish-frontend, and fish-mobile.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "@ts-rest/core": "^3.52.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@ts-rest/core": "^3.52.1",
+    "typescript": "^5.6.0",
+    "zod": "^3.25.76"
+  }
+}
