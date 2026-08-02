@@ -3,13 +3,13 @@ import {
     View,
     Text,
     StyleSheet,
-    Image,
     TouchableOpacity,
 } from "react-native";
 
 import { CartItem as CartItemType } from "../../context/CartContext";
 import Colors from "../../theme/colors";
 import { useCart } from "../../context/CartContext";
+import RemoteImage from "../RemoteImage";
 
 
 
@@ -25,9 +25,10 @@ export default function CartItem({ item }: Props) {
     } = useCart();
     return (
         <View style={styles.card}>
-            <Image
-                source={{ uri: item.imageUrl }}
+            <RemoteImage
+                uri={item.imageUrl}
                 style={styles.image}
+                borderRadius={10}
             />
 
             <View style={styles.content}>

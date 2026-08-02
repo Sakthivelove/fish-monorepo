@@ -53,6 +53,10 @@ export const getProducts = async ({
       include: {
         inventory: true,
       },
+
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
   return {

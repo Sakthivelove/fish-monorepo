@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
-    SafeAreaView,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { useOrdersByPhone } from "../../hooks/useOrders";
 import { useProfile } from "../../hooks/useProfile";
@@ -84,7 +85,15 @@ export default function OrdersScreen({
         isError,
         error,
         isFetching,
+        refetch,
     } = useOrdersByPhone(phone);
+
+    useFocusEffect(
+        useCallback(() => {
+            refetch();
+        }, [refetch])
+    );
+
 
     return (
         <SafeAreaView style={styles.container}>

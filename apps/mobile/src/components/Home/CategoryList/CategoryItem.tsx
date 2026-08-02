@@ -49,12 +49,14 @@ export default function CategoryItem({
 
 const styles = StyleSheet.create({
   container: {
-    // Fixed width, but NOT a fixed height — a fixed height combined
-    // with wrapping text is what was clipping longer category names
-    // (e.g. "Shellfish"). minHeight + paddingVertical lets the box
-    // grow instead of cutting text off.
+    // Fixed size — numberOfLines={1} + adjustsFontSizeToFit on the
+    // title already guarantee the text always fits in one line, so
+    // this can be a true fixed height instead of minHeight. A
+    // variable height here was letting individual chips render
+    // taller/shorter than their neighbors, which made the whole
+    // horizontal row appear to jump.
     width: 84,
-    minHeight: 84,
+    height: 84,
     borderRadius: 16,
     backgroundColor: "#F5F5F5",
     justifyContent: "center",

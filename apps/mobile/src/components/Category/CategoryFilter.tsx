@@ -25,6 +25,7 @@ export default function CategoryFilter({
       data={categories}
       keyExtractor={(item) => item}
       showsHorizontalScrollIndicator={false}
+      style={styles.list}
       contentContainerStyle={styles.container}
       renderItem={({ item }) => {
         const selected =
@@ -44,6 +45,7 @@ export default function CategoryFilter({
                 selected && styles.selectedText,
               ]}
               numberOfLines={1}
+              adjustsFontSizeToFit
             >
               {item}
             </Text>
@@ -55,17 +57,26 @@ export default function CategoryFilter({
 }
 
 const styles = StyleSheet.create({
+  list: {
+    height: 60,
+    flexGrow: 0,
+  },
+
   container: {
     paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 12,
   },
 
   chip: {
+    height: 40,
+    minWidth: 56,
     paddingHorizontal: 18,
-    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: "#EFEFEF",
     marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   selectedChip: {
@@ -74,9 +85,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 14,
-    lineHeight: 18,
     fontWeight: "600",
-    includeFontPadding: false,
   },
 
   selectedText: {

@@ -1,19 +1,18 @@
 import React from "react";
 import {
-  Image,
   StyleSheet,
   View,
 } from "react-native";
 
+import RemoteImage from "../../RemoteImage";
+
 export default function Banner() {
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: "https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=1200",
-        }}
-        resizeMode="cover"
+      <RemoteImage
+        uri="https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=1200"
         style={styles.image}
+        borderRadius={16}
       />
     </View>
   );

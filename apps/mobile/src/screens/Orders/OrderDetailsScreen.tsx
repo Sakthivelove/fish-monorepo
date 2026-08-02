@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
-    SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 
 import PrimaryButton from "../../components/PrimaryButton";
 import { useCancelOrder, useOrderDetails } from "../../hooks/useOrders";
@@ -40,7 +41,15 @@ export default function OrderDetailsScreen({
         isLoading,
         isError,
         error,
+        refetch,
     } = useOrderDetails(orderId);
+
+    useFocusEffect(
+        useCallback(() => {
+            refetch();
+        }, [refetch])
+    );
+
 
     const cancelOrder = useCancelOrder(orderId);
     const [cancelling, setCancelling] = useState(false);

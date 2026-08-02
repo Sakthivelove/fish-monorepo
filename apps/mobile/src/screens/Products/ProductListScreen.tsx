@@ -1,11 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  SafeAreaView,
   FlatList,
   Text,
   StyleSheet,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { useProducts } from "../../hooks/useProducts";
 import ProductCard from "../../components/ProductCard";
 import SearchBar from "../../components/Search/SearchBar";
@@ -28,6 +29,12 @@ export default function ProductListScreen({
   const [selectedCategory, setSelectedCategory] =
     useState("All");
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
   const categories = useMemo(() => {
     const distinct = Array.from(
       new Set(products.map((p) => p.category))
@@ -37,10 +44,14 @@ export default function ProductListScreen({
   }, [products]);
 
   const filteredProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
     return products.filter((product) => {
-      const matchesSearch = (product.name ?? "")
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      const matchesSearch =
+        query.length === 0 ||
+        (product.name ?? "").toLowerCase().includes(query) ||
+        (product.tamilName ?? "").includes(search.trim()) ||
+        (product.category ?? "").includes(search.trim());
 
       const matchesCategory =
         selectedCategory === "All"

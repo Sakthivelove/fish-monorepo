@@ -1,6 +1,7 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Product } from "../../services/product.service";
 import { styles } from "./ProductCard.styles";
+import RemoteImage from "../RemoteImage";
 
 type Props = {
   product: Product;
@@ -29,15 +30,13 @@ export default function ProductCard({
       ]}
       onPress={onPress}
     >
-      <Image
-        source={{
-          uri: product.imageUrl,
-        }}
+      <RemoteImage
+        uri={product.imageUrl}
         style={[
           styles.image,
           isHorizontal && styles.imageHorizontal,
         ]}
-        resizeMode="cover"
+        borderRadius={10}
       />
 
       <Text style={styles.title} numberOfLines={1}>

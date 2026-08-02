@@ -1,10 +1,10 @@
 import {
     FlatList,
-    SafeAreaView,
     StyleSheet,
     Text,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useCart, CartItem as CartItemType } from "../../context/CartContext";

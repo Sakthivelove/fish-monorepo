@@ -1,11 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 
 import HomeHeader from "../../components/Home/HomeHeader";
 import Banner from "../../components/Home/Banner/Banner";
@@ -29,7 +30,14 @@ export default function HomeScreen({
     isLoading,
     isError,
     error,
+    refetch,
   } = useProducts();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const categories = useMemo(() => {
     const distinct = Array.from(
@@ -40,12 +48,15 @@ export default function HomeScreen({
   }, [products]);
 
   const filteredProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    const rawQuery = search.trim();
+
     return products.filter((product) => {
-      const matchesSearch = (
-        product.name ?? ""
-      )
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      const matchesSearch =
+        query.length === 0 ||
+        (product.name ?? "").toLowerCase().includes(query) ||
+        (product.tamilName ?? "").includes(rawQuery) ||
+        (product.category ?? "").includes(rawQuery);
 
       const matchesCategory =
         selectedCategory === "All"

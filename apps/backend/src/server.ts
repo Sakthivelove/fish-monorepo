@@ -8,6 +8,7 @@ import swaggerUi from "swagger-ui-express"; // 👈 சேர்க்கப்�
 import { generateOpenApi } from "@ts-rest/open-api"; // 👈 சேர்க்கப்பட்டது
 
 import { createExpressEndpoints } from "@ts-rest/express";
+import multer from "multer";
 import { upload } from "./middlewares/upload.middleware";
 import * as uploadController from "./controllers/upload.controller";
 
@@ -142,7 +143,30 @@ app.use(
 
 app.post(
   "/upload",
-  upload.single("image"),
+  (req, res, next) => {
+    upload.single("image")(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({
+            message:
+              "Image is too large — max allowed is 20MB.",
+          });
+        }
+        return res
+          .status(400)
+          .json({ message: err.message });
+      }
+
+      if (err) {
+        console.error("[upload middleware]", err);
+        return res
+          .status(500)
+          .json({ message: "Upload failed." });
+      }
+
+      next();
+    });
+  },
   async (req, res) => {
     const result = await uploadController.uploadImage({ req });
     res.status(result.status).json(result.body);

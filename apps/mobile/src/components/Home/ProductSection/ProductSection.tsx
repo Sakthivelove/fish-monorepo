@@ -31,7 +31,8 @@ export default function ProductSection({
         data={products}
         keyExtractor={(item) => item.id}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.list}
+        style={styles.list}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <ProductCard
             product={item}
@@ -52,6 +53,11 @@ const styles = StyleSheet.create({
   },
 
   list: {
+    height: 250,
+    flexGrow: 0,
+  },
+
+  listContent: {
     paddingHorizontal: 20,
   },
 });

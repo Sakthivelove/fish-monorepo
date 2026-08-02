@@ -1,5 +1,7 @@
 import React from "react";
-import { Image, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+
+import RemoteImage from "../RemoteImage";
 
 type Props = {
   imageUrl: string;
@@ -9,13 +11,10 @@ export default function ProductImage({
   imageUrl,
 }: Props) {
   return (
-    <Image
-      source={{
-        uri:
-          imageUrl ||
-          "https://via.placeholder.com/600x400",
-      }}
+    <RemoteImage
+      uri={imageUrl}
       style={styles.image}
+      borderRadius={12}
     />
   );
 }
@@ -24,7 +23,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 240,
-    borderRadius: 12,
     marginBottom: 20,
   },
 });

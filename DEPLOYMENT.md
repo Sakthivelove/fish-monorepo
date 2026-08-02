@@ -1,5 +1,35 @@
 # Deployment Checklist
 
+## ⚠️ Reconfiguring Vercel + Render for the monorepo
+
+You deployed `frontend` (Vercel) and `backend` (Render) as separate
+repos before merging into this monorepo. Push `fish-monorepo` as your
+new single repo, then point both platforms at it with these settings
+— **do not change Root Directory**, just override the commands:
+
+### Vercel (frontend)
+- Root Directory: leave as `.` (repo root) — do NOT set it to
+  `apps/frontend`, it complicates workspace resolution.
+- Install Command: `npm install`
+- Build Command: `npm run build:frontend`
+- Output Directory: `apps/frontend/.next`
+- Env vars: same as before (`NEXT_PUBLIC_API_URL`).
+
+### Render (backend)
+- Root Directory: leave as `.` (repo root).
+- Build Command: `npm install && npm run build:backend`
+- Start Command: `npm run start:backend`
+- Env vars: same as before (`DATABASE_URL`, `JWT_SECRET`,
+  `CORS_ALLOWED_ORIGINS`, Cloudinary/Telegram/WhatsApp/Resend keys —
+  see `apps/backend/.env.example`).
+
+Both `build:frontend` and `build:backend` run `build:contracts`
+first automatically — `packages/contracts` always gets rebuilt before
+the app that depends on it, so you don't need a separate step.
+
+Once both are green on the monorepo, you can delete/archive the 4 old
+standalone repos.
+
 Everything below was either fixed in code, or needs a real value from
 you before going live (marked ⚠️).
 

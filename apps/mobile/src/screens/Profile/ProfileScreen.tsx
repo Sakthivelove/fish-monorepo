@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
     Alert,
-    SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
+    View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AddressForm, AddressFormValues } from "../../components/Checkout";
 import PrimaryButton from "../../components/PrimaryButton";
@@ -52,10 +53,12 @@ export default function ProfileScreen() {
 
                 <AddressForm values={form} onChange={setForm} />
 
-                <PrimaryButton
-                    title="Save"
-                    onPress={handleSave}
-                />
+                <View style={styles.saveButtonWrapper}>
+                    <PrimaryButton
+                        title="Save"
+                        onPress={handleSave}
+                    />
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -69,6 +72,11 @@ const styles = StyleSheet.create({
 
     content: {
         padding: 20,
+        paddingBottom: 40,
+    },
+
+    saveButtonWrapper: {
+        marginTop: 24,
     },
 
     title: {

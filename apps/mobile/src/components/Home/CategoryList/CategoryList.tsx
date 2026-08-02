@@ -26,7 +26,8 @@ export default function CategoryList({
       data={categories}
       keyExtractor={(item) => item}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.list}
+      style={styles.list}
+      contentContainerStyle={styles.container}
       renderItem={({ item }) => (
         <CategoryItem
           title={item}
@@ -45,6 +46,11 @@ export default function CategoryList({
 
 const styles = StyleSheet.create({
   list: {
+    height: 104,
+    flexGrow: 0,
+  },
+
+  container: {
     paddingHorizontal: 20,
     paddingTop: 20,
   },
