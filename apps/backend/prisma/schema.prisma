@@ -1,0 +1,193 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// generator client {
+//   provider = "prisma-client"
+//   output   = "../src/generated/client"
+// }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  //url      = env("DATABASE_URL")
+}
+
+// PostgreSQL இணைப்பை அமைத்தல்
+// datasource db {
+//   provider = "postgresql"
+//   // url      = env("DATABASE_URL") // .env கோப்பில் உங்கள் DB இணைப்பு URL இருக்க வேண்டும்
+// }
+
+// Prisma Client-ஐ உருவாக்குதல்
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CUTTING
+  PACKING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum PaymentMethod {
+  COD
+  UPI
+}
+
+enum CancelledBy {
+  CUSTOMER
+  ADMIN
+}
+
+// ----------------------------------------------------
+// 1. தயாரிப்புகள் (Products) அட்டவணை
+// ----------------------------------------------------
+model Product {
+  // UUID தானாக உருவாக்கப்படும்
+  id          String  @id @default(uuid())
+  nameTamil   String  @db.VarChar(100)
+  nameEnglish String? @db.VarChar(100) // optional
+  category    String  @db.VarChar(50) // எ.கா: மீன், இறால், நண்டு
+  description String
+  pricePerKg  Decimal @db.Decimal(10, 2)
+  imageUrl    String  @db.VarChar(255)
+  isActive    Boolean @default(true)
+
+  // Relations:
+  inventory  Inventory? // ஒரு தயாரிப்புக்கு ஒரு சரக்கு விவரம்
+  orderItems OrderItem[] // இந்தத் தயாரிப்பு உள்ள ஆர்டர் பொருட்கள்
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+}
+
+// ----------------------------------------------------
+// 2. சரக்கு (Inventory) அட்டவணை
+// ----------------------------------------------------
+model Inventory {
+  id Int @id @default(autoincrement())
+
+  // Foreign Key to Product
+  productId String @unique // ஒரு தயாரிப்புக்கு ஒரு சரக்கு விவரம் மட்டுமே இருக்க வேண்டும்
+
+  stockQuantityGrams Int // இருப்பில் உள்ள அளவு (கிராமில்)
+  lastUpdated        DateTime @updatedAt
+
+  // Relations:
+  product Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ----------------------------------------------------
+// 3. வாடிக்கையாளர்கள் (Customers) அட்டவணை
+// ----------------------------------------------------
+model Customer {
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(100)
+  email       String? @unique @db.VarChar(100)
+  phoneNumber String  @unique @db.VarChar(15)
+
+  // Relations:
+  orders Order[] // வாடிக்கையாளர் செய்த ஆர்டர்கள்
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ----------------------------------------------------
+// 4. ஆர்டர்கள் (Orders) அட்டவணை
+// ----------------------------------------------------
+model Order {
+  id String @id @default(uuid())
+
+  // Foreign Key to Customer
+  customerId String
+
+  orderDate       DateTime      @default(now())
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  status          OrderStatus   @default(PENDING) // எ.கா: 'புதியது', 'டெலிவரி செய்யப்பட்டது'
+  deliveryAddress String
+  pincode         String        @db.VarChar(10)
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  transactionId   String?
+
+  // Relations:
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  orderItems OrderItem[] // இந்த ஆர்டரில் உள்ள பொருட்கள்
+
+  cancelledBy  CancelledBy?
+  cancelReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([orderDate])
+}
+
+// ----------------------------------------------------
+// 5. ஆர்டர் பொருட்கள் (Order Items) அட்டவணை
+// ----------------------------------------------------
+model OrderItem {
+  id Int @id @default(autoincrement())
+
+  // Foreign Keys:
+  orderId   String
+  productId String
+
+  quantityGrams Int // ஆர்டர் செய்யப்பட்ட அளவு (கிராமில்)
+  unitPrice     Decimal @db.Decimal(10, 2) // ஆர்டரின் போது இருந்த ஒரு கிலோவின் விலை
+  subtotal      Decimal @db.Decimal(10, 2)
+  cuttingOption String? @db.VarChar(50) // வெட்டும் முறை (எ.கா: 'ஃபில்லட்')
+
+  // Relations:
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  // கூட்டுப் பிரதான விசை (Composite Primary Key)-ஐத் தவிர்க்க
+  // ஒரே ஆர்டரில் ஒரே தயாரிப்பு இருமுறை இருந்தால் இதைக் கையாளலாம்.
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+model Admin {
+  id           String @id @default(uuid())
+  username     String @unique @db.VarChar(50)
+  email        String @unique @db.VarChar(100)
+  passwordHash String @db.VarChar(255)
+
+  role     AdminRole @default(ADMIN)
+  isActive Boolean   @default(true)
+
+  lastLoginAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+  @@index([email])
+}
