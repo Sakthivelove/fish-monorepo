@@ -4,7 +4,8 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "npx tsc",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && npx tsc",
     "start": "node dist/src/server.js",
     "seed": "tsx prisma/seed.ts"
   },

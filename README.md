@@ -52,6 +52,12 @@ workspace root, so Metro can follow the `@fish/contracts` symlink.
 This is already set up — do not run `expo` commands from anywhere
 other than `apps/mobile/`.
 
+## Deployment
+
+See [`DEPLOYMENT.md`](./DEPLOYMENT.md) for the pre-launch checklist —
+what's already fixed vs. what still needs real values from you
+(domains, API keys, bundle identifiers).
+
 ## The 4 old repos
 
 Kept as-is for now (not archived) — mentioned here so nobody

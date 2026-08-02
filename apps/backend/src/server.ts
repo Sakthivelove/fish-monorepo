@@ -28,9 +28,39 @@ const port = Number(process.env.PORT) || 3001;
 // Middleware
 // ---------------------------------------------------
 
+// Comma-separated list of allowed origins, e.g.
+// "https://shop.yourdomain.com,https://admin.yourdomain.com"
+const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (allowedOrigins.length === 0) {
+  console.warn(
+    "[CORS] CORS_ALLOWED_ORIGINS is not set — allowing ALL origins. " +
+      "This is fine for local dev but must be set to your real " +
+      "frontend/admin domain(s) before deploying to production."
+  );
+}
+
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      // Requests with no Origin header (mobile apps, curl, server-to-server)
+      // are always allowed — CORS only applies to browsers.
+      if (!origin) return callback(null, true);
+
+      if (
+        allowedOrigins.length === 0 ||
+        allowedOrigins.includes(origin)
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(`CORS: origin "${origin}" is not allowed`)
+      );
+    },
     credentials: true,
   })
 );

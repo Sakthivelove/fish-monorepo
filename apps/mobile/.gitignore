@@ -36,6 +36,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# environment secrets — copy .env.example to .env locally, never commit .env
+.env
+
 # generated native folders
 /ios
 /android

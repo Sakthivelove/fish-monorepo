@@ -1,7 +1,23 @@
 import axios from "axios";
 
+// EXPO_PUBLIC_-prefixed vars are inlined at build time by Expo from
+// .env (see .env.example) — different values per environment via
+// eas.json build profiles (development/preview/production).
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+if (!API_URL) {
+  // Fails loudly instead of silently shipping a build that points
+  // at a developer's laptop IP. Set EXPO_PUBLIC_API_URL in .env
+  // (local dev) or in the eas.json build profile (real builds).
+  console.warn(
+    "[api/client] EXPO_PUBLIC_API_URL is not set — falling back to " +
+      "a local dev IP. This will NOT work outside your dev machine's " +
+      "network. Set EXPO_PUBLIC_API_URL in .env — see .env.example."
+  );
+}
+
 export const api = axios.create({
-  baseURL: "http://192.168.43.99:3001",
+  baseURL: API_URL ?? "http://192.168.43.99:3001",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
