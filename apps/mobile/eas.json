@@ -14,13 +14,13 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://staging-api.yourdomain.com"
+        "EXPO_PUBLIC_API_URL": "https://fish-backend-3ikv.onrender.com"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.yourdomain.com"
+        "EXPO_PUBLIC_API_URL": "https://fish-backend-3ikv.onrender.com"
       }
     }
   },
