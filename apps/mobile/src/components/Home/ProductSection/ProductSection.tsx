@@ -35,6 +35,7 @@ export default function ProductSection({
         renderItem={({ item }) => (
           <ProductCard
             product={item}
+            variant="horizontal"
             onPress={() =>
               onProductPress(item.id)
             }

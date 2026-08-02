@@ -11,10 +11,7 @@ import ProductCard from "../../components/ProductCard";
 import SearchBar from "../../components/Search/SearchBar";
 import CategoryFilter from "../../components/Category/CategoryFilter";
 import { ProductListScreenProps } from "../../navigation/types";
-import { CATEGORIES } from "../../constants/categories";
 import { getErrorMessage } from "../../utils/getErrorMessage";
-
-const categories = CATEGORIES.map((c) => c.name);
 
 export default function ProductListScreen({
   navigation,
@@ -30,6 +27,14 @@ export default function ProductListScreen({
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] =
     useState("All");
+
+  const categories = useMemo(() => {
+    const distinct = Array.from(
+      new Set(products.map((p) => p.category))
+    ).sort();
+
+    return ["All", ...distinct];
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {

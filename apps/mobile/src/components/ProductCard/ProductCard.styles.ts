@@ -9,11 +9,21 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
 
+  cardHorizontal: {
+    width: 170,
+    marginRight: 14,
+    marginBottom: 0,
+  },
+
   image: {
     width: "100%",
     height: 180,
     borderRadius: 10,
     marginBottom: 12,
+  },
+
+  imageHorizontal: {
+    height: 120,
   },
 
   title: {

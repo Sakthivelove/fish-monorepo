@@ -31,6 +31,14 @@ export default function HomeScreen({
     error,
   } = useProducts();
 
+  const categories = useMemo(() => {
+    const distinct = Array.from(
+      new Set(products.map((p) => p.category))
+    ).sort();
+
+    return ["All", ...distinct];
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesSearch = (
@@ -87,6 +95,7 @@ export default function HomeScreen({
         />
 
         <CategoryList
+          categories={categories}
           selectedCategory={
             selectedCategory
           }

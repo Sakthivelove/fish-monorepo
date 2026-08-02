@@ -43,6 +43,7 @@ export default function CategoryFilter({
                 styles.text,
                 selected && styles.selectedText,
               ]}
+              numberOfLines={1}
             >
               {item}
             </Text>
@@ -72,7 +73,10 @@ const styles = StyleSheet.create({
   },
 
   text: {
+    fontSize: 14,
+    lineHeight: 18,
     fontWeight: "600",
+    includeFontPadding: false,
   },
 
   selectedText: {

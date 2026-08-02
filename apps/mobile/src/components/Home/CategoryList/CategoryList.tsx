@@ -5,9 +5,10 @@ import {
 } from "react-native";
 
 import CategoryItem from "./CategoryItem";
-import { CATEGORIES } from "../../../constants/categories";
+import { getCategoryEmoji } from "../../../constants/categories";
 
 type Props = {
+  categories: string[];
   selectedCategory: string;
   onSelectCategory: (
     category: string
@@ -15,26 +16,26 @@ type Props = {
 };
 
 export default function CategoryList({
+  categories,
   selectedCategory,
   onSelectCategory,
 }: Props) {
   return (
     <FlatList
       horizontal
-      data={CATEGORIES}
-      keyExtractor={(item) => item.id}
+      data={categories}
+      keyExtractor={(item) => item}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.list}
       renderItem={({ item }) => (
         <CategoryItem
-          title={item.name}
-          emoji={item.emoji}
+          title={item}
+          emoji={getCategoryEmoji(item)}
           selected={
-            selectedCategory === item.name
+            selectedCategory === item
           }
-
           onPress={() =>
-            onSelectCategory(item.name)
+            onSelectCategory(item)
           }
         />
       )}
