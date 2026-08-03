@@ -12,7 +12,7 @@ import { AddressForm, AddressFormValues } from "../../components/Checkout";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useProfile } from "../../hooks/useProfile";
 import Colors from "../../theme/colors";
-import { registerForPushNotifications } from "../../utils/registerForPushNotifications";
+import { registerForPushNotifications, registerForPushNotificationsDebug } from "../../utils/registerForPushNotifications";
 
 export default function ProfileScreen() {
     const { profile, updateProfile, loading } = useProfile();
@@ -47,6 +47,32 @@ export default function ProfileScreen() {
         Alert.alert("Saved", "Your details have been saved.");
     }
 
+    async function handleTestPushRegistration() {
+        if (form.phoneNumber.trim().length < 10) {
+            Alert.alert(
+                "Phone number needed",
+                "Enter and save a valid phone number first."
+            );
+            return;
+        }
+
+        const result = await registerForPushNotificationsDebug(
+            form.phoneNumber
+        );
+
+        if (result.success) {
+            Alert.alert(
+                "Push notifications ready",
+                "This device registered successfully. Order status updates will be pushed here."
+            );
+        } else {
+            Alert.alert(
+                "Not registered",
+                result.reason
+            );
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
@@ -63,6 +89,13 @@ export default function ProfileScreen() {
                     <PrimaryButton
                         title="Save"
                         onPress={handleSave}
+                    />
+                </View>
+
+                <View style={styles.testButtonWrapper}>
+                    <PrimaryButton
+                        title="Test Push Notifications"
+                        onPress={handleTestPushRegistration}
                     />
                 </View>
             </ScrollView>
@@ -83,6 +116,10 @@ const styles = StyleSheet.create({
 
     saveButtonWrapper: {
         marginTop: 24,
+    },
+
+    testButtonWrapper: {
+        marginTop: 12,
     },
 
     title: {
