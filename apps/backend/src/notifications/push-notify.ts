@@ -24,7 +24,12 @@ export async function notifyOrderStatusChange(
       where: { phoneNumber },
     });
 
-    if (tokens.length === 0) return;
+    if (tokens.length === 0) {
+      console.log(
+        `[notifyOrderStatusChange] no push tokens registered for phone ${phoneNumber} — skipping push for order ${orderId}`
+      );
+      return;
+    }
 
     const message =
       STATUS_MESSAGES[status] ??
@@ -37,6 +42,10 @@ export async function notifyOrderStatusChange(
         body: message,
         data: { orderId, status },
       }))
+    );
+
+    console.log(
+      `[notifyOrderStatusChange] sent to ${tokens.length} device(s) for phone ${phoneNumber}, order ${orderId}, status ${status}`
     );
   } catch (error) {
     console.error(
