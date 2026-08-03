@@ -10,6 +10,7 @@ import { generateOpenApi } from "@ts-rest/open-api"; // 👈 சேர்க்�
 import { createExpressEndpoints } from "@ts-rest/express";
 import multer from "multer";
 import { upload } from "./middlewares/upload.middleware";
+import { authenticateDeliveryPartner } from "./middlewares/delivery-auth.middleware";
 import * as uploadController from "./controllers/upload.controller";
 
 import { contract, expressRouterContract } from "@fish/contracts";
@@ -139,6 +140,11 @@ app.get("/", (_, res) => {
 app.use(
   "/admin",
   authenticateAdmin
+);
+
+app.use(
+  "/delivery/orders",
+  authenticateDeliveryPartner
 );
 
 app.post(

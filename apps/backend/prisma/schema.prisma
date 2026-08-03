@@ -139,11 +139,17 @@ model Order {
   cancelledBy  CancelledBy?
   cancelReason String?
 
+  // Which delivery partner this order is assigned to (set by admin).
+  // Nullable — most orders sit unassigned until Confirmed/Packing.
+  assignedToId String?
+  assignedTo   DeliveryPartner? @relation(fields: [assignedToId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([customerId])
   @@index([orderDate])
+  @@index([assignedToId])
 }
 
 // ----------------------------------------------------
@@ -204,6 +210,27 @@ model PushToken {
 
   phoneNumber   String
   expoPushToken String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phoneNumber])
+}
+
+// Delivery staff accounts. Separate from Admin — a delivery partner
+// only ever sees/updates orders assigned to them, never the full
+// admin surface. Login is by phone number (how the business already
+// identifies people) + password, same JWT pattern as Admin.
+model DeliveryPartner {
+  id           String  @id @default(uuid())
+  name         String  @db.VarChar(100)
+  phoneNumber  String  @unique @db.VarChar(15)
+  passwordHash String  @db.VarChar(255)
+  isActive     Boolean @default(true)
+
+  orders Order[]
+
+  lastLoginAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
