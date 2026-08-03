@@ -612,11 +612,19 @@ Open Google Maps
   } as const;
 };
 
-export const updateOrderStatus = async ({ params, body }: { params: { id: string }; body: { status: string } }) => {
-  const existing = await prisma.order.findUnique({ where: { id: params.id } });
-  if (!existing) return { status: 404, body: { message: "Order not found" } } as const;
-
-  const updated = await prisma.order.update({ where: { id: params.id }, data: { status: body.status as OrderStatus }, include: { customer: true } });
+// Shared by the admin updateOrderStatus route below and the
+// delivery-partner status update route (delivery.controller.ts) —
+// one place for the DB update + notification fan-out, so a future
+// fix to notification handling doesn't need to be made twice.
+export const applyOrderStatusUpdate = async (
+  orderId: string,
+  status: OrderStatus
+) => {
+  const updated = await prisma.order.update({
+    where: { id: orderId },
+    data: { status },
+    include: { customer: true },
+  });
 
   try {
     await sendOrderStatusUpdate({
@@ -627,7 +635,7 @@ export const updateOrderStatus = async ({ params, body }: { params: { id: string
     });
   } catch (error) {
     console.error(
-      "[updateOrderStatus] WhatsApp notification failed (status update still succeeded):",
+      "[applyOrderStatusUpdate] WhatsApp notification failed (status update still succeeded):",
       error
     );
   }
@@ -637,6 +645,15 @@ export const updateOrderStatus = async ({ params, body }: { params: { id: string
     updated.id,
     updated.status
   );
+
+  return updated;
+};
+
+export const updateOrderStatus = async ({ params, body }: { params: { id: string }; body: { status: string } }) => {
+  const existing = await prisma.order.findUnique({ where: { id: params.id } });
+  if (!existing) return { status: 404, body: { message: "Order not found" } } as const;
+
+  const updated = await applyOrderStatusUpdate(params.id, body.status as OrderStatus);
 
   return {
     status: 200,

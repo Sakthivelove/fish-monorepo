@@ -15,6 +15,7 @@ import * as uploadController from "./controllers/upload.controller";
 import { contract, expressRouterContract } from "@fish/contracts";
 import { appRouter } from "./routes";
 import { authenticateAdmin } from "./middlewares/auth.middleware";
+import { authenticateDeliveryPartner } from "./middlewares/delivery-auth.middleware";
 
 import { prisma } from "./lib/prisma";
 
@@ -139,6 +140,11 @@ app.get("/", (_, res) => {
 app.use(
   "/admin",
   authenticateAdmin
+);
+
+app.use(
+  "/delivery/orders",
+  authenticateDeliveryPartner
 );
 
 app.post(
