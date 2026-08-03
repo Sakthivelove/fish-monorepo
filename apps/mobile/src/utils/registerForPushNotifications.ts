@@ -23,10 +23,24 @@ async function attemptRegistration(
   }
 
   if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.DEFAULT,
-    });
+    // Android locks a notification channel's settings (including
+    // sound) once it's been created on a device — the app can never
+    // change them again via code after that, only the user can, in
+    // system Settings. The very first build created a channel called
+    // "default" with no sound configured, so devices that already
+    // have that build installed are stuck silent no matter what we
+    // change here. Using a new channel id ("order-updates") makes
+    // Android create a fresh channel with the right settings instead
+    // of trying (and failing) to patch the old one.
+    await Notifications.setNotificationChannelAsync(
+      "order-updates",
+      {
+        name: "Order Updates",
+        importance: Notifications.AndroidImportance.HIGH,
+        sound: "default",
+        vibrationPattern: [0, 250, 250, 250],
+      }
+    );
   }
 
   const { status: existingStatus } =

@@ -1,0 +1,6 @@
+# Force LF line endings for all text files in this repo, on every
+# platform. Without this, files edited/checked-out on Windows drift
+# to CRLF while files touched in Linux/CI stay LF, and `git status`
+# starts showing every touched file as "modified" even when nothing
+# actually changed — happened twice already on this project.
+* text=auto eol=lf

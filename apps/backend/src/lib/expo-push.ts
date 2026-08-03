@@ -22,7 +22,16 @@ export async function sendExpoPushNotifications(
       Accept: "application/json",
     },
     body: JSON.stringify(
-      messages.map((m) => ({ ...m, sound: "default" }))
+      messages.map((m) => ({
+        ...m,
+        sound: "default",
+        // Must match the channel id created on the device in
+        // registerForPushNotifications.ts (Android only — iOS
+        // ignores this field). Without it Android routes the
+        // notification to its own auto-created "Miscellaneous"
+        // channel, which has no sound configured either.
+        channelId: "order-updates",
+      }))
     ),
   });
 
